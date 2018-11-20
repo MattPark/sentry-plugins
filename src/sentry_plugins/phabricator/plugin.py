@@ -16,13 +16,13 @@ import phabricator
 
 def query_to_result(field, result):
     if field == 'issue_id':
-        return 'T{}: {}'.format(
+        return u'T{}: {}'.format(
             result['id'],
             result['fields']['name'],
         )
 
     if field == 'assignee':
-        return '{} ({})'.format(result['fields']['realName'], result['fields']['username'])
+        return u'{} ({})'.format(result['fields']['realName'], result['fields']['username'])
 
     return result['fields']['name']
 
@@ -115,7 +115,10 @@ class PhabricatorPlugin(CorePluginMixin, IssuePlugin2):
             }, {
                 'name': 'comment', 'label': 'Comment',
                 'default': u'Sentry issue: [{issue_id}]({url})'.format(
-                    url=absolute_uri(group.get_absolute_url()),
+                    url=absolute_uri(
+                        group.get_absolute_url(
+                            params={
+                                'referrer': 'phabricator_plugin'})),
                     issue_id=group.qualified_short_id
                 ),
                 'type': 'textarea',
